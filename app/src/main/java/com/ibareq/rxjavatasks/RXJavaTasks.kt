@@ -1,5 +1,6 @@
 package com.ibareq.rxjavatasks
 
+import android.util.Log
 import io.reactivex.rxjava3.core.Observable
 import java.util.concurrent.TimeUnit
 
@@ -17,7 +18,10 @@ object RXJavaTasks {
      * let it emit characters form A to Z each 1 second
      */
     fun task1(): Observable<String> {
-        return Observable.
+
+        return Observable.interval(1 , TimeUnit.SECONDS).take(26)
+            .map{it.toInt().plus(65).toChar().toString()}
+
     }
 
     /**
@@ -26,7 +30,7 @@ object RXJavaTasks {
      */
     fun task2(): Observable<String> {
         val mList = listOf("A", "B", "C", "C", "D", "B", "E")
-        return Observable.fromIterable(mList)
+        return Observable.fromIterable(mList).distinct()
             .zipWith(Observable.interval(300, TimeUnit.MILLISECONDS), {item, _ -> item})
     }
 
@@ -37,7 +41,7 @@ object RXJavaTasks {
     fun task3(): Observable<String> {
         val firstObservable = Observable.just("A", "B", "C", "D", "E")
         val secondObservable = Observable.range(1,5)
-        return firstObservable.mergeWith(secondObservable)
+        return firstObservable.mergeWith(secondObservable.map { toString() })
             .zipWith(Observable.interval(300, TimeUnit.MILLISECONDS), {item, _ -> item})
     }
 
@@ -45,7 +49,7 @@ object RXJavaTasks {
      * add the required operators to emit data from 21 to 80 only
      */
     fun task4(): Observable<Int> {
-        return Observable.range(1,100)
+        return Observable.range(1,100).skip(20).take(51)
             .zipWith(Observable.interval(300, TimeUnit.MILLISECONDS), {item, _ -> item})
     }
 
@@ -56,7 +60,6 @@ object RXJavaTasks {
         val firstObservable = Observable.just("A", "B", "C", "D", "E").zipWith(Observable.interval(300, TimeUnit.MILLISECONDS), {item, _ -> item})
         val secondObservable = Observable.range(1,5).zipWith(Observable.interval(300, TimeUnit.MILLISECONDS), {item, _ -> item})
 
-        return Observable.
+        return Observable.zip( firstObservable , secondObservable , {f1, f2 -> "$f1$f2"} )
     }
-
 }
